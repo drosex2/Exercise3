@@ -107,9 +107,9 @@ protected:
 
   // Auxiliary member functions
 
-  virtual unsigned long HashKey(unsigned long,unsigned long) const noexcept;
-  virtual unsigned long Find(unsigned long) const noexcept;
-  virtual unsigned long FindEmpty(unsigned long) const noexcept;
+  virtual unsigned long HashKey(const Data&,unsigned long) const noexcept;
+  virtual unsigned long Find(const Data&) const noexcept;
+  virtual unsigned long FindEmpty(const Data&) const noexcept;
   // type Remove(argument) specifiers;
 
 };
