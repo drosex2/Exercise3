@@ -202,10 +202,12 @@ bool HashTableOpnAdr<Data>::operator==(const HashTableOpnAdr<Data>& hashTableCmp
     if(size==hashTableCmp.size){
         unsigned long i=0;
         while(i<tableSize && val){
-            if(hashTableCmp.Exists(Table[i])){
-                val=true;
-            }else{
-                val=false;
+            if(flags[i]=='1'){
+                    if(hashTableCmp.Exists(Table[i])){
+                    val=true;
+                }else{
+                    val=false;
+                }
             }
             i++;
         }
@@ -261,7 +263,7 @@ bool HashTableOpnAdr<Data>::Insert(Data&& data){
 template <typename Data>
 bool HashTableOpnAdr<Data>::Remove(const Data& data){
     unsigned long ind=Find(data);
-    if(ind<tableSize){
+    if(ind!=tableSize){
         flags[ind]='2';
         size--;
         return true;
@@ -273,7 +275,7 @@ bool HashTableOpnAdr<Data>::Remove(const Data& data){
 template <typename Data>
 bool HashTableOpnAdr<Data>::Exists(const Data& data) const noexcept{
     unsigned long ind=Find(data);
-    if(ind<tableSize){
+    if(ind!=tableSize){
         return true;
     }else{
         return false;
@@ -291,6 +293,8 @@ void HashTableOpnAdr<Data>::Resize(unsigned long newSize){
         oldTable=Table;
         Vector<Data> newTable(tableSize);
         Table=newTable;
+        Vector<char> oldFlags(tableSize);
+        oldFlags=flags;
         Vector<char> newFlags(tableSize);
         for(unsigned long i=0;i<tableSize;i++){
             newFlags[i]='0';
@@ -299,7 +303,10 @@ void HashTableOpnAdr<Data>::Resize(unsigned long newSize){
         
         size=0;
         for(unsigned long j=0;j<oldTable.Size();j++){
-            Insert(oldTable[j]);
+            if(oldFlags[j]=='1'){
+                Insert(oldTable[j]);
+            }
+            
         }
 
     }
@@ -323,14 +330,14 @@ void HashTableOpnAdr<Data>::Clear(){
 //funzioni protette
 template <typename Data>
 unsigned long HashTableOpnAdr<Data>::HashKey(const Data& data, unsigned long i) const noexcept{
-    return (HashKey(data)+3*(i*i))%tableSize;
+    return (HashKey(data)+11*i)%tableSize;
 }
 
 template <typename Data>
 unsigned long HashTableOpnAdr<Data>::Find(const Data& data) const noexcept{
     unsigned long i=0;
-    unsigned long key=HashKey(data,i);
-    while(flags[key]!='2' && i<tableSize){
+    unsigned long key=HashKey(data,0);
+    while(i<tableSize){
         key=HashKey(data,i);
         if(Table[key]==data && flags[key]=='1'){
             return key;

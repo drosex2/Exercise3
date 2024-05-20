@@ -22,13 +22,13 @@ void lasdtest() {
   uint stestnum = 0, stesterr = 0;
   uint ftestnum = 0, ftesterr = 0;
 
-  // loctestnum = 0; loctesterr = 0;
-  // testSimpleExercise1A(loctestnum, loctesterr);
-  // stestnum += loctestnum; stesterr += loctesterr;
+  loctestnum = 0; loctesterr = 0;
+  testSimpleExercise1A(loctestnum, loctesterr);
+  stestnum += loctestnum; stesterr += loctesterr;
 
-  // loctestnum = 0; loctesterr = 0;
-  // testSimpleExercise1B(loctestnum, loctesterr);
-  // stestnum += loctestnum; stesterr += loctesterr;
+  loctestnum = 0; loctesterr = 0;
+  testSimpleExercise1B(loctestnum, loctesterr);
+  stestnum += loctestnum; stesterr += loctesterr;
 
   loctestnum = 0; loctesterr = 0;
   testFullExercise1A(loctestnum, loctesterr);
@@ -43,13 +43,13 @@ void lasdtest() {
 
   stestnum = 0; stesterr = 0; ftestnum = 0; ftesterr = 0;
 
-  // loctestnum = 0; loctesterr = 0;
-  // testSimpleExercise2A(loctestnum, loctesterr);
-  // stestnum += loctestnum; stesterr += loctesterr;
+  loctestnum = 0; loctesterr = 0;
+  testSimpleExercise2A(loctestnum, loctesterr);
+  stestnum += loctestnum; stesterr += loctesterr;
 
-  // loctestnum = 0; loctesterr = 0;
-  // testSimpleExercise2B(loctestnum, loctesterr);
-  // stestnum += loctestnum; stesterr += loctesterr;
+  loctestnum = 0; loctesterr = 0;
+  testSimpleExercise2B(loctestnum, loctesterr);
+  stestnum += loctestnum; stesterr += loctesterr;
 
   loctestnum = 0; loctesterr = 0;
   testFullExercise2A(loctestnum, loctesterr);
