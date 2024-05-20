@@ -1,4 +1,5 @@
 #include <cmath>
+using namespace std;
 namespace lasd {
 
 
@@ -26,8 +27,7 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(unsigned long sizeIn){
     size=0;
     a=dista(gen);
     b=distb(gen);
-    tableSize=std::pow(2,(std::ceil(std::log2(sizeIn)))); //calcolo la potenza di 2 superiore a sizeIn
-    //tableSize=sizeIn;
+    tableSize=pow(2,(ceil(log2(sizeIn)))); //calcolo la potenza di 2 superiore a sizeIn
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
     Table=t;
@@ -43,8 +43,7 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(const TraversableContainer<Data>& travers
     size=0;
     a=dista(gen);
     b=distb(gen);
-    tableSize = std::pow(2,(std::ceil(std::log2(traversableCon.Size()*10))));
-    //tableSize=traversableCon.Size()*10;
+    tableSize = pow(2,(ceil(log2(traversableCon.Size()*10))));
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
     Table=t;
@@ -66,11 +65,9 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(unsigned long sizeIn,const TraversableCon
     a=dista(gen);
     b=distb(gen);
     if(sizeIn<=traversableCon.Size()){
-        tableSize = std::pow(2,(std::ceil(std::log2(traversableCon.Size()*10))));
-        tableSize=traversableCon.Size()*10;
+        tableSize = pow(2,(ceil(log2(traversableCon.Size()*10))));
     }else{
-        tableSize = std::pow(2,(std::ceil(std::log2(sizeIn))));
-        //tableSize=sizeIn;
+        tableSize = pow(2,(ceil(log2(sizeIn))));
     }
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
@@ -92,8 +89,7 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(MappableContainer<Data>&& mappableCon){
     size=0;
     a=dista(gen);
     b=distb(gen);
-    tableSize = std::pow(2,(std::ceil(std::log2(mappableCon.Size()*10))));
-    //tableSize=mappableCon.Size()*10;
+    tableSize = pow(2,(ceil(log2(mappableCon.Size()*10))));
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
     Table=t;
@@ -115,11 +111,9 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(unsigned long sizeIn,MappableContainer<Da
     a=dista(gen);
     b=distb(gen);
     if(sizeIn<=mappableCon.Size()){
-        tableSize = std::pow(2,(std::ceil(std::log2(mappableCon.Size()*10))));
-        //tableSize=mappableCon.Size()*10;
+        tableSize = pow(2,(ceil(log2(mappableCon.Size()*10))));
     }else{
-        tableSize = std::pow(2,(std::ceil(std::log2(sizeIn))));
-        //tableSize=sizeIn;
+        tableSize = pow(2,(ceil(log2(sizeIn))));
     }
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
@@ -203,7 +197,7 @@ bool HashTableOpnAdr<Data>::operator==(const HashTableOpnAdr<Data>& hashTableCmp
         unsigned long i=0;
         while(i<tableSize && val){
             if(flags[i]=='1'){
-                    if(hashTableCmp.Exists(Table[i])){
+                if(hashTableCmp.Exists(Table[i])){
                     val=true;
                 }else{
                     val=false;
@@ -287,8 +281,7 @@ bool HashTableOpnAdr<Data>::Exists(const Data& data) const noexcept{
 template <typename Data>
 void HashTableOpnAdr<Data>::Resize(unsigned long newSize){
     if(newSize>tableSize){
-        tableSize = std::pow(2,(std::ceil(std::log2(newSize))));
-        //tableSize=newSize;
+        tableSize = pow(2,(ceil(log2(newSize))));
         Vector<Data> oldTable;
         oldTable=Table;
         Vector<Data> newTable(tableSize);
@@ -300,7 +293,6 @@ void HashTableOpnAdr<Data>::Resize(unsigned long newSize){
             newFlags[i]='0';
         }
         flags=newFlags;
-        
         size=0;
         for(unsigned long j=0;j<oldTable.Size();j++){
             if(oldFlags[j]=='1'){
@@ -308,7 +300,6 @@ void HashTableOpnAdr<Data>::Resize(unsigned long newSize){
             }
             
         }
-
     }
 }
 
@@ -317,8 +308,6 @@ void HashTableOpnAdr<Data>::Resize(unsigned long newSize){
 template <typename Data>
 void HashTableOpnAdr<Data>::Clear(){
     if(size>0){
-        // Table.Clear();
-        // flags.Clear();
         for(unsigned long i=0;i<tableSize;i++){
             flags[i]='0';
         }
@@ -330,7 +319,7 @@ void HashTableOpnAdr<Data>::Clear(){
 //funzioni protette
 template <typename Data>
 unsigned long HashTableOpnAdr<Data>::HashKey(const Data& data, unsigned long i) const noexcept{
-    return (HashKey(data)+11*i)%tableSize;
+    return (HashKey(data)+HashKey(data)*i)%tableSize;
 }
 
 template <typename Data>
