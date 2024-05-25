@@ -31,6 +31,7 @@ protected:
   using HashTable<Data>::distb;
   using HashTable<Data>::size;
   using HashTable<Data>::tableSize;
+  using HashTable<Data>::maxTableSize;
   using HashTable<Data>::HashKey;
   Vector<List<Data>> Table;
 

@@ -19,7 +19,7 @@ int main() {
     lasdtest();
   }else if(choice==2)
   {
-    //mytest();
+    mytest();
   }
   
   

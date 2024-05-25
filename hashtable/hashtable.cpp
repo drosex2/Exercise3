@@ -15,8 +15,8 @@ template <>
 class Hashable<double>{
     public:
     unsigned long operator()(const double & dat) const noexcept{
-        long intpart=floor(dat);
-        long fracpart=pow(2,24)*(dat-intpart);
+        long intpart=floor(dat); //separo il float in parte intera 
+        long fracpart=pow(2,24)*(dat-intpart); // e parte decimale, trasformo la parte decimale in intera applicando uno shifting
         return(intpart*fracpart);
         
     }

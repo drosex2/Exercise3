@@ -6,7 +6,7 @@ namespace lasd {
 template <typename Data>
 HashTableClsAdr<Data>::HashTableClsAdr(){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
     Resize(tableSize);
 }
@@ -16,8 +16,11 @@ HashTableClsAdr<Data>::HashTableClsAdr(){
 template <typename Data>
 HashTableClsAdr<Data>::HashTableClsAdr(unsigned long sizeIn){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
+    if(sizeIn>maxTableSize){
+        sizeIn=maxTableSize;
+    } 
     tableSize=sizeIn;
     Resize(tableSize);
 
@@ -26,7 +29,7 @@ HashTableClsAdr<Data>::HashTableClsAdr(unsigned long sizeIn){
 template <typename Data>
 HashTableClsAdr<Data>::HashTableClsAdr(const TraversableContainer<Data>& traversableCon){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
     Resize(tableSize);
     traversableCon.Traverse(
@@ -40,8 +43,11 @@ HashTableClsAdr<Data>::HashTableClsAdr(const TraversableContainer<Data>& travers
 template <typename Data>
 HashTableClsAdr<Data>::HashTableClsAdr(unsigned long sizeIn,const TraversableContainer<Data>& traversableCon ){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
+    if(sizeIn>maxTableSize){
+        sizeIn=maxTableSize;
+    } 
     tableSize=sizeIn;
     //Table=new Vector<List<Data>>(tableSize);
     Resize(tableSize);
@@ -56,7 +62,7 @@ HashTableClsAdr<Data>::HashTableClsAdr(unsigned long sizeIn,const TraversableCon
 template <typename Data>
 HashTableClsAdr<Data>::HashTableClsAdr(MappableContainer<Data>&& mappableCon){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
     Resize(tableSize);
     mappableCon.Map(
@@ -70,8 +76,11 @@ HashTableClsAdr<Data>::HashTableClsAdr(MappableContainer<Data>&& mappableCon){
 template <typename Data>
 HashTableClsAdr<Data>::HashTableClsAdr(unsigned long sizeIn,MappableContainer<Data>&& mappableCon ){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
+    if(sizeIn>maxTableSize){
+        sizeIn=maxTableSize;
+    }  
     tableSize=sizeIn;
     Resize(tableSize);
     mappableCon.Map(
@@ -97,10 +106,13 @@ HashTableClsAdr<Data>::HashTableClsAdr(const HashTableClsAdr<Data> & hashTable){
 
 template <typename Data>
 HashTableClsAdr<Data>::HashTableClsAdr(HashTableClsAdr<Data>&& hashTable) noexcept{
+   
     std::swap(size,hashTable.size);
     std::swap(a,hashTable.a);
     std::swap(b,hashTable.b);
     std::swap(tableSize,hashTable.tableSize);
+    Vector<List<Data>> newTable(tableSize);
+    Table=newTable;
     std::swap(Table,hashTable.Table);
 }
 
@@ -119,7 +131,7 @@ HashTableClsAdr<Data>::~HashTableClsAdr(){
 
 template <typename Data>
 HashTableClsAdr<Data> & HashTableClsAdr<Data>::operator=(const HashTableClsAdr<Data>& hashTable){
-    Clear();
+    //Clear();
     a=hashTable.a;
     b=hashTable.b;
     size=hashTable.size; 
@@ -130,7 +142,7 @@ HashTableClsAdr<Data> & HashTableClsAdr<Data>::operator=(const HashTableClsAdr<D
 
 template <typename Data>
 HashTableClsAdr<Data> & HashTableClsAdr<Data>::operator=(HashTableClsAdr<Data>&& hashTable)noexcept{
-    Clear();
+    //Clear();
     std::swap(size,hashTable.size);
     std::swap(a,hashTable.a);
     std::swap(b,hashTable.b);
@@ -151,6 +163,7 @@ bool HashTableClsAdr<Data>::operator==(const HashTableClsAdr<Data>& hashTableCmp
             unsigned long j=0;
             while(j<Table[i].size && val){
                 if(hashTableCmp.Exists(Table[i].operator[](j))){
+                    
                     val=true;
                 }else{
                     val=false;
@@ -211,15 +224,23 @@ bool HashTableClsAdr<Data>::Exists(const Data& data)const noexcept{
 //RESIZE
 template <typename Data>
 void HashTableClsAdr<Data>::Resize(unsigned long newSize ){
-    Vector<List<Data>> oldTable;
-    oldTable=Table;
-    Vector<List<Data>> newTable(newSize);
-    Table=newTable;
-    tableSize=newSize;
-    size=0; //dato che inserisco i vecchi elementi la size verrà nuovamente incrementata, se non la azzero risulterà essere il doppio
-    for(unsigned long i=0;i<oldTable.Size();i++){
-        for(unsigned long j=0;j<oldTable[i].size;j++){
-            Insert(oldTable[i].operator[](j));
+    if(newSize==0){
+        Clear();
+    }
+    else{
+        if(newSize>maxTableSize){
+            newSize=maxTableSize;
+        }    
+        Vector<List<Data>> oldTable;
+        oldTable=Table;
+        Vector<List<Data>> newTable(newSize);
+        Table=newTable;
+        tableSize=newSize;
+        size=0; //dato che inserisco i vecchi elementi la size verrà nuovamente incrementata, se non la azzero risulterà essere il doppio
+        for(unsigned long i=0;i<oldTable.Size();i++){
+            for(unsigned long j=0;j<oldTable[i].size;j++){
+                Insert(oldTable[i].operator[](j));
+            }
         }
     }
     //oldTable.Clear();
@@ -229,13 +250,13 @@ void HashTableClsAdr<Data>::Resize(unsigned long newSize ){
 template <typename Data>
 void HashTableClsAdr<Data>::Clear(){
     if(size>0){
-        // a=1;
-        // b=0;
         for(unsigned long i=0;i<tableSize;i++){
             Table[i].Clear();
         }
-        //Table.Clear();
-        //tableSize=128;
+        
+        tableSize=128;
+        Vector<List<Data>> newTable(tableSize);
+        Table=newTable;
         size=0;
     }
 }

@@ -9,7 +9,7 @@ namespace lasd {
 template <typename Data>
 HashTableOpnAdr<Data>::HashTableOpnAdr(){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
@@ -25,9 +25,15 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(){
 template <typename Data>
 HashTableOpnAdr<Data>::HashTableOpnAdr(unsigned long sizeIn){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
-    tableSize=pow(2,(ceil(log2(sizeIn)))); //calcolo la potenza di 2 superiore a sizeIn
+    if(sizeIn>maxTableSize){
+        sizeIn=maxTableSize;
+    }else if(sizeIn<128){
+        tableSize=128;
+    }else{
+        tableSize=pow(2,(ceil(log2(sizeIn)))); //calcolo la potenza di 2 superiore a sizeIn
+    }
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
     Table=t;
@@ -41,9 +47,9 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(unsigned long sizeIn){
 template <typename Data>
 HashTableOpnAdr<Data>::HashTableOpnAdr(const TraversableContainer<Data>& traversableCon){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
-    tableSize = pow(2,(ceil(log2(traversableCon.Size()*10))));
+    tableSize = pow(2,(ceil(log2(traversableCon.Size()*2))));
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
     Table=t;
@@ -62,12 +68,18 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(const TraversableContainer<Data>& travers
 template <typename Data>
 HashTableOpnAdr<Data>::HashTableOpnAdr(unsigned long sizeIn,const TraversableContainer<Data>& traversableCon){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
     if(sizeIn<=traversableCon.Size()){
-        tableSize = pow(2,(ceil(log2(traversableCon.Size()*10))));
+        tableSize = pow(2,(ceil(log2(traversableCon.Size()*2))));
     }else{
-        tableSize = pow(2,(ceil(log2(sizeIn))));
+        if(sizeIn>maxTableSize){
+            sizeIn=maxTableSize;
+        }else if(sizeIn<128){
+            tableSize=128;
+        }else{
+            tableSize = pow(2,(ceil(log2(sizeIn))));
+        } 
     }
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
@@ -87,9 +99,9 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(unsigned long sizeIn,const TraversableCon
 template <typename Data>
 HashTableOpnAdr<Data>::HashTableOpnAdr(MappableContainer<Data>&& mappableCon){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
-    tableSize = pow(2,(ceil(log2(mappableCon.Size()*10))));
+    tableSize = pow(2,(ceil(log2(mappableCon.Size()*2))));
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
     Table=t;
@@ -108,12 +120,19 @@ HashTableOpnAdr<Data>::HashTableOpnAdr(MappableContainer<Data>&& mappableCon){
 template <typename Data>
 HashTableOpnAdr<Data>::HashTableOpnAdr(unsigned long sizeIn,MappableContainer<Data>&& mappableCon){
     size=0;
-    a=dista(gen);
+    a=dista(gen)*2+1;
     b=distb(gen);
     if(sizeIn<=mappableCon.Size()){
-        tableSize = pow(2,(ceil(log2(mappableCon.Size()*10))));
+        tableSize = pow(2,(ceil(log2(mappableCon.Size()*2))));
     }else{
-        tableSize = pow(2,(ceil(log2(sizeIn))));
+        if(sizeIn>maxTableSize){
+            sizeIn=maxTableSize;
+        }else if(sizeIn<128){
+            tableSize=128;
+        }else{
+            tableSize = pow(2,(ceil(log2(sizeIn))));
+        }  
+        
     }
     Vector<Data> t(tableSize);
     Vector<char> f(tableSize);
@@ -245,6 +264,9 @@ bool HashTableOpnAdr<Data>::Insert(Data&& data){
             Table[ind]=std::move(data);
             flags[ind]='1';
             size++;
+            if(size==tableSize-1){
+                Resize(tableSize*2);
+            }
             return true;
         }else{
             return false;
@@ -280,8 +302,15 @@ bool HashTableOpnAdr<Data>::Exists(const Data& data) const noexcept{
 
 template <typename Data>
 void HashTableOpnAdr<Data>::Resize(unsigned long newSize){
+    if(newSize==0){
+        Clear();
+    }
+    if(newSize>maxTableSize){
+        newSize=maxTableSize;
+    }
     if(newSize>tableSize){
         tableSize = pow(2,(ceil(log2(newSize))));
+        
         Vector<Data> oldTable;
         oldTable=Table;
         Vector<Data> newTable(tableSize);
@@ -289,6 +318,7 @@ void HashTableOpnAdr<Data>::Resize(unsigned long newSize){
         Vector<char> oldFlags(tableSize);
         oldFlags=flags;
         Vector<char> newFlags(tableSize);
+
         for(unsigned long i=0;i<tableSize;i++){
             newFlags[i]='0';
         }
@@ -300,6 +330,8 @@ void HashTableOpnAdr<Data>::Resize(unsigned long newSize){
             }
             
         }
+        oldTable.Clear();
+        oldFlags.Clear();
     }
 }
 
@@ -311,22 +343,25 @@ void HashTableOpnAdr<Data>::Clear(){
         for(unsigned long i=0;i<tableSize;i++){
             flags[i]='0';
         }
+        tableSize=128;
         size=0;
     }
 }
 
 
-//funzioni protette
+//funzioni protette 
+
+//hashkey(data,i)  tale che hashkey(data,0)=hashkey(data)
 template <typename Data>
 unsigned long HashTableOpnAdr<Data>::HashKey(const Data& data, unsigned long i) const noexcept{
-    return (HashKey(data)+HashKey(data)*i)%tableSize;
+    return (HashKey(data)+7*i)%tableSize; //l'hop è coprimo a tableSize
 }
 
 template <typename Data>
 unsigned long HashTableOpnAdr<Data>::Find(const Data& data) const noexcept{
     unsigned long i=0;
     unsigned long key=HashKey(data,0);
-    while(i<tableSize){
+    while(flags[key]!='0'){
         key=HashKey(data,i);
         if(Table[key]==data && flags[key]=='1'){
             return key;

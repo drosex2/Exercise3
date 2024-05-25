@@ -34,6 +34,7 @@ protected:
   using HashTable<Data>::size;
   using HashTable<Data>::tableSize;
   using HashTable<Data>::HashKey;
+  using HashTable<Data>::maxTableSize;
   Vector<Data> Table;
   Vector<char> flags; // 0-> vuoto , 1-> pieno, 2->cancellato
 public:

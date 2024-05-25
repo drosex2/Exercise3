@@ -41,14 +41,15 @@ protected:
   using DictionaryContainer<Data>::size;
   unsigned long a=1;
   unsigned long b=0;
-  static const unsigned long prime=1000000016531;
+  
   std::default_random_engine gen=std::default_random_engine(std::random_device{}());
-  std::uniform_int_distribution<unsigned long> dista= std::uniform_int_distribution<unsigned long>(1,prime-1);
-  std::uniform_int_distribution<unsigned long> distb= std::uniform_int_distribution<unsigned long>(0,prime-1);
+  std::uniform_int_distribution<unsigned long> dista= std::uniform_int_distribution<unsigned long>(1,pow(2,34)-1);
+  std::uniform_int_distribution<unsigned long> distb= std::uniform_int_distribution<unsigned long>(0,pow(2,34)-1);
 
   static const Hashable<Data> enchash;
 
   unsigned long tableSize=128; //
+  static const unsigned long maxTableSize=pow(2,35);
 
   // ...
 
